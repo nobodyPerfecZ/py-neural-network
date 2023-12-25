@@ -1,3 +1,5 @@
+from typing import Optional
+
 import numpy as np
 
 from PyNeuralNet.module import Module
@@ -14,10 +16,11 @@ class ReLU(Module):
     The gradients dZ/dX for the ReLU function is:
         - dZ/dX = 1 if X > 0 else 0
     """
-    def forward(self, X: np.ndarray) -> np.ndarray:
+
+    def forward(self, X: np.ndarray, **kwargs) -> np.ndarray:
         return np.where(X <= 0, 0, X)
 
-    def gradient(self, X: np.ndarray) -> np.ndarray:
+    def gradient(self, X: np.ndarray, **kwargs) -> np.ndarray:
         return np.where(X <= 0, 0, 1)
 
 
@@ -41,10 +44,10 @@ class LeakyReLU(Module):
         assert 0.0 <= slope <= 1.0, f"Illegal slope {slope}. The argument should be in between [0.0, 1.0]!"
         self.slope = slope
 
-    def forward(self, X: np.ndarray) -> np.ndarray:
+    def forward(self, X: np.ndarray, **kwargs) -> np.ndarray:
         return np.where(X <= 0, self.slope * X, X)
 
-    def gradient(self, X: np.ndarray) -> np.ndarray:
+    def gradient(self, X: np.ndarray, **kwargs) -> np.ndarray:
         return np.where(X <= 0, self.slope, 1)
 
 
@@ -60,10 +63,10 @@ class Sigmoid(Module):
         - dZ/dX = Sigmoid(X) * (1 - Sigmoid(X))
     """
 
-    def forward(self, X: np.ndarray) -> np.ndarray:
+    def forward(self, X: np.ndarray, **kwargs) -> np.ndarray:
         return 1 / (1 + np.exp(-X))
 
-    def gradient(self, X: np.ndarray) -> np.ndarray:
+    def gradient(self, X: np.ndarray, **kwargs) -> np.ndarray:
         return self.forward(X) * (1 - self.forward(X))
 
 
@@ -79,8 +82,31 @@ class Tanh(Module):
         - dZ/dX = 1 - Tanh(X)^2
     """
 
-    def forward(self, X: np.ndarray) -> np.ndarray:
+    def forward(self, X: np.ndarray, **kwargs) -> np.ndarray:
         return (np.exp(X) - np.exp(-X)) / (np.exp(X) + np.exp(-X))
 
-    def gradient(self, X: np.ndarray) -> np.ndarray:
+    def gradient(self, X: np.ndarray, **kwargs) -> np.ndarray:
         return 1 - self.forward(X) ** 2
+
+
+class Softmax(Module):
+
+    def forward(self, X: np.ndarray, axis: Optional[int] = None) -> np.ndarray:
+        X_max = np.max(X, axis=axis, keepdims=True)
+        e_X = np.exp(X - X_max)
+        return e_X / np.sum(e_X, axis=axis, keepdims=True)
+
+    def gradient(self, X: np.ndarray, axis: Optional[int] = None) -> np.ndarray:
+        # TODO: Implement here
+        raise NotImplementedError
+
+
+class LogSoftmax(Softmax):
+
+    def forward(self, X: np.ndarray, axis: Optional[int] = None) -> np.ndarray:
+        return np.log(super().forward(X, axis=axis))
+
+    def gradient(self, X: np.ndarray, axis: Optional[int] = None) -> np.ndarray:
+        gradients = self.forward(X, axis=axis)
+        np.fill_diagonal(gradients, gradients.diagonal() - 1)
+        return gradients
