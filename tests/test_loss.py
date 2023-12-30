@@ -28,7 +28,7 @@ class TestMSE(unittest.TestCase):
         """
         Tests the magic method __call__().
         """
-        loss = self.loss_fn(self.y_pred, self.y_true)
+        loss1 = self.loss_fn(self.y_pred, self.y_true, reduction="none")
         np.testing.assert_almost_equal(np.array([
             [1],
             [0],
@@ -39,13 +39,19 @@ class TestMSE(unittest.TestCase):
             [25],
             [36],
             [49],
-        ]), loss)
+        ]), loss1)
+
+        loss2 = self.loss_fn(self.y_pred, self.y_true, reduction="mean")
+        np.testing.assert_almost_equal(np.array([15.66666667]), loss2)
+
+        loss3 = self.loss_fn(self.y_pred, self.y_true, reduction="sum")
+        np.testing.assert_almost_equal(np.array([141.0]), loss3)
 
     def test_forward(self):
         """
         Tests the method forward().
         """
-        loss = self.loss_fn.forward(self.y_pred, self.y_true)
+        loss1 = self.loss_fn.forward(self.y_pred, self.y_true, reduction="none")
         np.testing.assert_almost_equal(np.array([
             [1],
             [0],
@@ -56,13 +62,20 @@ class TestMSE(unittest.TestCase):
             [25],
             [36],
             [49],
-        ]), loss)
+        ]), loss1)
 
-    def test_gradient(self):
+        loss2 = self.loss_fn.forward(self.y_pred, self.y_true, reduction="mean")
+        np.testing.assert_almost_equal(np.array([15.66666667]), loss2)
+
+        loss3 = self.loss_fn.forward(self.y_pred, self.y_true, reduction="sum")
+        np.testing.assert_almost_equal(np.array([141.0]), loss3)
+
+    def test_backward(self):
         """
-        Tests the method gradient().
+        Tests the method backward().
         """
-        dL_dy_pred = self.loss_fn.gradient(self.y_pred, self.y_true)
+        self.loss_fn.forward(self.y_pred, self.y_true)
+        dL_dy_pred = self.loss_fn.backward()
         np.testing.assert_almost_equal(np.array([
             [-2],
             [0],
@@ -75,10 +88,22 @@ class TestMSE(unittest.TestCase):
             [14],
         ]), dL_dy_pred)
 
+    def test_parameters(self):
+        """
+        Tests the method parameters().
+        """
+        self.assertEqual({"module_0": {}}, self.loss_fn.parameters())
+
+    def test_gradients(self):
+        """
+        Tests the method gradients().
+        """
+        self.assertEqual({"module_0": {}}, self.loss_fn.gradients())
+
 
 class TestMAE(unittest.TestCase):
     """
-    Tests the class MAE
+    Tests the class MAE.
     """
 
     def setUp(self):
@@ -100,7 +125,7 @@ class TestMAE(unittest.TestCase):
         """
         Tests the magic method __call__().
         """
-        loss = self.loss_fn(self.y_pred, self.y_true)
+        loss1 = self.loss_fn(self.y_pred, self.y_true, reduction="none")
         np.testing.assert_almost_equal(np.array([
             [1],
             [0],
@@ -111,13 +136,19 @@ class TestMAE(unittest.TestCase):
             [5],
             [6],
             [7],
-        ]), loss)
+        ]), loss1)
+
+        loss2 = self.loss_fn(self.y_pred, self.y_true, reduction="mean")
+        np.testing.assert_almost_equal(np.array([3.22222222]), loss2)
+
+        loss3 = self.loss_fn(self.y_pred, self.y_true, reduction="sum")
+        np.testing.assert_almost_equal(np.array([29.0]), loss3)
 
     def test_forward(self):
         """
         Tests the method forward().
         """
-        loss = self.loss_fn.forward(self.y_pred, self.y_true)
+        loss1 = self.loss_fn.forward(self.y_pred, self.y_true, reduction="none")
         np.testing.assert_almost_equal(np.array([
             [1],
             [0],
@@ -128,13 +159,20 @@ class TestMAE(unittest.TestCase):
             [5],
             [6],
             [7],
-        ]), loss)
+        ]), loss1)
 
-    def test_gradient(self):
+        loss2 = self.loss_fn.forward(self.y_pred, self.y_true, reduction="mean")
+        np.testing.assert_almost_equal(np.array([3.22222222]), loss2)
+
+        loss3 = self.loss_fn.forward(self.y_pred, self.y_true, reduction="sum")
+        np.testing.assert_almost_equal(np.array([29.0]), loss3)
+
+    def test_backward(self):
         """
-        Tests the method gradient().
+        Tests the method backward().
         """
-        dL_dy_pred = self.loss_fn.gradient(self.y_pred, self.y_true)
+        self.loss_fn.forward(self.y_pred, self.y_true)
+        dL_dy_pred = self.loss_fn.backward()
         np.testing.assert_almost_equal(np.array([
             [-1],
             [0],
@@ -146,6 +184,18 @@ class TestMAE(unittest.TestCase):
             [1],
             [1],
         ]), dL_dy_pred)
+
+    def test_parameters(self):
+        """
+        Tests the method parameters().
+        """
+        self.assertEqual({"module_0": {}}, self.loss_fn.parameters())
+
+    def test_gradients(self):
+        """
+        Tests the method gradients().
+        """
+        self.assertEqual({"module_0": {}}, self.loss_fn.gradients())
 
 
 class TestBCEWithLogits(unittest.TestCase):
@@ -172,7 +222,7 @@ class TestBCEWithLogits(unittest.TestCase):
         """
         Tests the magic method __call__().
         """
-        loss = self.loss_fn(self.y_pred, self.y_true)
+        loss1 = self.loss_fn(self.y_pred, self.y_true, reduction="none")
         np.testing.assert_almost_equal(np.array([
             [6.93147181e-01],
             [3.13261688e-01],
@@ -183,13 +233,19 @@ class TestBCEWithLogits(unittest.TestCase):
             [2.47568514e-03],
             [9.11466454e-04],
             [3.35406373e-04],
-        ]), loss)
+        ]), loss1)
+
+        loss2 = self.loss_fn(self.y_pred, self.y_true, reduction="mean")
+        np.testing.assert_almost_equal(np.array([0.13450134]), loss2)
+
+        loss3 = self.loss_fn(self.y_pred, self.y_true, reduction="sum")
+        np.testing.assert_almost_equal(np.array([1.21051207]), loss3)
 
     def test_forward(self):
         """
         Tests the method forward().
         """
-        loss = self.loss_fn.forward(self.y_pred, self.y_true)
+        loss1 = (self.loss_fn.forward(self.y_pred, self.y_true, reduction="none"))
         np.testing.assert_almost_equal(np.array([
             [6.93147181e-01],
             [3.13261688e-01],
@@ -200,13 +256,20 @@ class TestBCEWithLogits(unittest.TestCase):
             [2.47568514e-03],
             [9.11466454e-04],
             [3.35406373e-04],
-        ]), loss)
+        ]), loss1)
 
-    def test_gradient(self):
+        loss2 = self.loss_fn.forward(self.y_pred, self.y_true, reduction="mean")
+        np.testing.assert_almost_equal(np.array([0.13450134]), loss2)
+
+        loss3 = self.loss_fn.forward(self.y_pred, self.y_true, reduction="sum")
+        np.testing.assert_almost_equal(np.array([1.21051207]), loss3)
+
+    def test_backward(self):
         """
-        Tests the method gradient().
+        Tests the method backward().
         """
-        dL_dz = self.loss_fn.gradient(self.y_pred, self.y_true)
+        self.loss_fn.forward(self.y_pred, self.y_true)
+        dL_dz = self.loss_fn.backward()
         np.testing.assert_almost_equal(np.array([
             [-5.00000000e-01],
             [-2.68941421e-01],
@@ -218,6 +281,18 @@ class TestBCEWithLogits(unittest.TestCase):
             [-9.11051194e-04],
             [-3.35350130e-04],
         ]), dL_dz)
+
+    def test_parameters(self):
+        """
+        Tests the method parameters().
+        """
+        self.assertEqual({"module_0": {}}, self.loss_fn.parameters())
+
+    def test_gradients(self):
+        """
+        Tests the method gradients().
+        """
+        self.assertEqual({"module_0": {}}, self.loss_fn.gradients())
 
 
 class TestCEWithLogits(unittest.TestCase):
@@ -241,7 +316,7 @@ class TestCEWithLogits(unittest.TestCase):
         """
         Tests the magic method __call__().
         """
-        loss = self.loss_fn(self.y_pred, self.y_true)
+        loss1 = self.loss_fn(self.y_pred, self.y_true, reduction="none")
         np.testing.assert_almost_equal(np.array([
             [1.40760596],
             [1.40760596],
@@ -252,13 +327,19 @@ class TestCEWithLogits(unittest.TestCase):
             [1.40760596],
             [1.40760596],
             [1.40760596],
-        ]), loss)
+        ]), loss1)
+
+        loss2 = self.loss_fn(self.y_pred, self.y_true, reduction="mean")
+        np.testing.assert_almost_equal(np.array([1.40760596]), loss2)
+
+        loss3 = self.loss_fn(self.y_pred, self.y_true, reduction="sum")
+        np.testing.assert_almost_equal(np.array([12.66845368]), loss3)
 
     def test_forward(self):
         """
         Tests the method forward().
         """
-        loss = self.loss_fn.forward(self.y_pred, self.y_true)
+        loss1 = self.loss_fn.forward(self.y_pred, self.y_true, reduction="none")
         np.testing.assert_almost_equal(np.array([
             [1.40760596],
             [1.40760596],
@@ -269,13 +350,20 @@ class TestCEWithLogits(unittest.TestCase):
             [1.40760596],
             [1.40760596],
             [1.40760596],
-        ]), loss)
+        ]), loss1)
 
-    def test_gradient(self):
+        loss2 = self.loss_fn.forward(self.y_pred, self.y_true, reduction="mean")
+        np.testing.assert_almost_equal(np.array([1.40760596]), loss2)
+
+        loss3 = self.loss_fn.forward(self.y_pred, self.y_true, reduction="sum")
+        np.testing.assert_almost_equal(np.array([12.66845368]), loss3)
+
+    def test_backward(self):
         """
-        Tests the method gradient().
+        Tests the method backward().
         """
-        dL_dz = self.loss_fn.gradient(self.y_pred, self.y_true)
+        self.loss_fn.forward(self.y_pred, self.y_true)
+        dL_dz = self.loss_fn.backward()
         np.testing.assert_almost_equal(np.array([
             [-2.40760596, -2.40760596, -0.40760596],
             [-2.40760596, -2.40760596, -0.40760596],
@@ -287,6 +375,18 @@ class TestCEWithLogits(unittest.TestCase):
             [-2.40760596, -2.40760596, -0.40760596],
             [-2.40760596, -2.40760596, -0.40760596],
         ]), dL_dz)
+
+    def test_parameters(self):
+        """
+        Tests the method parameters().
+        """
+        self.assertEqual({"module_0": {}}, self.loss_fn.parameters())
+
+    def test_gradients(self):
+        """
+        Tests the method gradients().
+        """
+        self.assertEqual({"module_0": {}}, self.loss_fn.parameters())
 
 
 if __name__ == '__main__':
