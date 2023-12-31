@@ -99,39 +99,20 @@ class TestSequential(unittest.TestCase):
         grad2 = gradients["module_2"]
 
         # Test if module0 (first linear layer) has the right bias and weights
+        np.testing.assert_almost_equal(np.array([1, 1]), grad0["bias"])
         np.testing.assert_almost_equal(np.array([
-            [1, 1],
-            [1, 1],
-            [1, 1]
-        ]), grad0["bias"])
-        np.testing.assert_almost_equal(np.array([
-            [
-                [1, 1],
-                [2, 2],
-                [3, 3],
-            ], [
-                [4, 4],
-                [5, 5],
-                [6, 6],
-            ], [
-                [7, 7],
-                [8, 8],
-                [9, 9],
-        ]]), grad0["weights"])
+            [4, 4],
+            [5, 5],
+            [6, 6],
+
+        ]), grad0["weights"])
 
         # Test if module2 (second linear layer) has the right bias and weights
         self.assertNotIn("bias", grad2)
         np.testing.assert_almost_equal(np.array([
-            [
-                [1, 1],
-                [2, 2],
-            ], [
-                [4, 4],
-                [5, 5],
-            ], [
-                [7, 7],
-                [8, 8],
-            ]]), grad2["weights"])
+            [4, 4],
+            [5, 5],
+        ]), grad2["weights"])
 
 
 class TestLinear(unittest.TestCase):
@@ -209,25 +190,11 @@ class TestLinear(unittest.TestCase):
         self.model.forward(self.X)
         self.model.backward(self.dL_dZ)
         gradients = self.model.gradients()
+        np.testing.assert_almost_equal(np.array([1, 1]), gradients["module_0"]["bias"])
         np.testing.assert_almost_equal(np.array([
-            [1, 1],
-            [1, 1],
-            [1, 1],
-        ]), gradients["module_0"]["bias"])
-        np.testing.assert_almost_equal(np.array([
-            [
-                [1, 1],
-                [2, 2],
-                [3, 3],
-            ], [
-                [3, 3],
-                [4, 4],
-                [5, 5],
-            ], [
-                [6, 6],
-                [7, 7],
-                [8, 8],
-            ]
+            [3.33333333, 3.33333333],
+            [4.33333333, 4.33333333],
+            [5.33333333, 5.33333333],
         ]), gradients["module_0"]["weights"])
 
 

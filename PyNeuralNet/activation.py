@@ -69,8 +69,8 @@ class ReLU(Activation):
     def backward(self, dL_dZ: np.ndarray, **kwargs) -> np.ndarray:
         if self.X is None:
             raise ValueError("You need to call forward() first, before to compute the gradients!")
-        dZ_dX = np.where(self.X <= 0, 0, 1)
-        return dL_dZ * dZ_dX
+        # dZ_dX = np.where(self.X <= 0, 0, 1)
+        return dL_dZ * np.where(self.X <= 0, 0, 1)
 
 
 class LeakyReLU(Activation):
@@ -90,7 +90,7 @@ class LeakyReLU(Activation):
     """
 
     def __init__(self, slope: float = 0.1):
-        if 0.0 > slope > 1.0:
+        if slope < 0.0 or slope > 1.0:
             raise ValueError(f"Illegal slope {slope}. The argument should be in between [0.0, 1.0]!")
         self.slope = slope
         self.X = None
@@ -102,8 +102,8 @@ class LeakyReLU(Activation):
     def backward(self, dL_dZ: np.ndarray, **kwargs) -> np.ndarray:
         if self.X is None:
             raise ValueError("You need to call forward() first, before to compute the gradients!")
-        dZ_dX = np.where(self.X <= 0, self.slope, 1)
-        return dL_dZ * dZ_dX
+        # dZ_dX = np.where(self.X <= 0, self.slope, 1)
+        return dL_dZ * np.where(self.X <= 0, self.slope, 1)
 
 
 class Sigmoid(Activation):
@@ -128,8 +128,8 @@ class Sigmoid(Activation):
     def backward(self, dL_dZ: np.ndarray, **kwargs) -> np.ndarray:
         if self.X is None:
             raise ValueError("You need to call forward() first, before to compute the gradients!")
-        dZ_dX = self.forward(self.X) * (1 - self.forward(self.X))
-        return dL_dZ * dZ_dX
+        # dZ_dX = self.forward(self.X) * (1 - self.forward(self.X))
+        return dL_dZ * (self.forward(self.X) * (1 - self.forward(self.X)))
 
 
 class Tanh(Activation):
@@ -154,8 +154,8 @@ class Tanh(Activation):
     def backward(self, dL_dZ: np.ndarray, **kwargs) -> np.ndarray:
         if self.X is None:
             raise ValueError("You need to call forward() first, before to compute the gradients!")
-        dZ_dX = 1 - self.forward(self.X) ** 2
-        return dL_dZ * dZ_dX
+        # dZ_dX = 1 - self.forward(self.X) ** 2
+        return dL_dZ * (1 - self.forward(self.X) ** 2)
 
 
 class Softmax(Activation):

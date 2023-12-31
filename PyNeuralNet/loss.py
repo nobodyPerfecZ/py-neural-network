@@ -94,10 +94,10 @@ class MSE(Loss):
     Mean Squared Error (MSE) Loss Function.
 
     The Loss function is defined as:
-        - L(y_hat, y) = 1/N sum_i=1^N (y_hat_i - y)²
+        - L(y_hat, y) = 1/N sum_i=1^N (y_hat_i - y_i)²
 
     The gradients of the loss function is defined as:
-        - dL/dy_hat = 2/N * (y_hat - y)
+        - dL/dy_hat_i = 2/N * (y_hat_i - y_i)
     """
 
     def __init__(self):
