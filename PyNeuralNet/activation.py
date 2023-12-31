@@ -86,7 +86,7 @@ class LeakyReLU(Activation):
 
     Args:
         slope (float):
-            Defines the slope for the case if X <= 0
+            The slope for the case if X <= 0
     """
 
     def __init__(self, slope: float = 0.1):

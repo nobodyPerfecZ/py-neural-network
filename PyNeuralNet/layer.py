@@ -103,8 +103,8 @@ class Linear(Module):
             in_features: int,
             out_features: int,
             bias: bool = True,
-            weight_initializer: str = "pytorch_uniform",
-            bias_initializer: str = "pytorch_uniform",
+            weight_initializer: str = "random_uniform",
+            bias_initializer: str = "random_uniform",
             random_state: Optional[int] = None,
     ):
         if in_features < 1:
@@ -212,7 +212,7 @@ class Linear(Module):
         }
 
         if self.bias_initializer not in bias_initializer_wrapper:
-            raise ValueError(f"Illegal bias_initializer {bias_initializer_wrapper}! "
+            raise ValueError(f"Illegal bias_initializer {bias_initializer_wrapper}. "
                              f"The valid options are {bias_initializer_wrapper.keys()}!")
         return bias_initializer_wrapper[self.bias_initializer]
 

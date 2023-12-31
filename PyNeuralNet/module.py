@@ -80,8 +80,7 @@ class Module(ABC):
 
     def parameters(self, **kwargs) -> dict[str, dict[str, np.ndarray]]:
         """
-        Returns the parameters of the module, which
-        should be optimized with gradient descent.
+        Returns the parameters of the module, which should be optimized with gradient descent.
 
         Returns:
             dict[str, dict[str, np.ndarray]]:
@@ -101,9 +100,7 @@ class Module(ABC):
 
     def gradients(self, **kwargs) -> dict[str, dict[str, np.ndarray]]:
         """
-        Returns the gradients of each parameter of the
-        module, which should be optimized with gradient
-        descent.
+        Returns the gradients of each parameter of the module, which should be optimized with gradient descent.
 
         Returns:
             dict[str, dict[str, np.ndarray]]:

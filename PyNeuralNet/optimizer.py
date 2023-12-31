@@ -7,7 +7,7 @@ from PyNeuralNet.module import Module
 
 class Optimizer(ABC):
     """
-    A base class for optimization algorithms used for training neural networks.
+    A base class for optimization algorithms used for training parameters of a module.
     """
 
     @abstractmethod
@@ -44,7 +44,7 @@ class SGD(Optimizer):
             The factor of dampening the current gradient
 
         weight_decay (float, optional):
-            The weight of the L2 penality
+            The weight of the L2 penalty
 
         nesterov (bool, optional):
             Controls if Nesterov momentum is enabled
@@ -143,7 +143,7 @@ class Adam(Optimizer):
             The added noise in the update rule
 
         weight_decay (float, optional):
-            The weight of the L2 penality
+            The weight of the L2 penalty
     """
     def __init__(
             self,
