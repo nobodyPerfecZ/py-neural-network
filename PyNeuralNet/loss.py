@@ -3,7 +3,7 @@ from typing import Optional, Union
 
 import numpy as np
 
-from PyNeuralNet.activation import Sigmoid, LogSoftmax
+from PyNeuralNet.activation import Sigmoid, LogSoftmax, Softmax
 from PyNeuralNet.module import Module
 
 
@@ -254,7 +254,15 @@ class BCEWithLogits(Loss):
 
 
 class CEWithLogits(Loss):
-    # TODO: Fix Errors
+    """
+    Cross Entropy (with Logits) (CE) Loss Function.
+
+    The Loss function is defined as:
+        - L(y_logits, y) = - 1/N sum_i=1^N y_i_c * log(softmax(y_logits_i))
+
+    The gradients of the loss function is defined as:
+        - dL/dy_logits = softmax(y_logits) - y_i_c
+    """
     def __init__(self):
         self.y_pred = None
         self.y_true = None
@@ -279,18 +287,18 @@ class CEWithLogits(Loss):
         if reduction not in reduction_wrapper.keys():
             raise ValueError(f"Illegal reduction {reduction}! The valid options are {reduction_wrapper.keys()}!")
 
-        # Apply a log-softmax on y_pred (from logits to probabilities)
-        y_pred = LogSoftmax()(y_pred, axis=-1)
-
         self.y_pred = y_pred
         self.y_true = y_true
 
-        # Get the corresponding probabilities of the true classes (columns)
-        rows = np.arange(len(y_pred))
-        y_pred = np.expand_dims(y_pred[rows, y_true], axis=-1)
+        # Apply a log-softmax on y_pred (from logits to probabilities)
+        y_pred = LogSoftmax()(y_pred, axis=-1)
+
+        # Create a one-hot encoded matrix for y_true
+        num_classes = self.y_pred.shape[-1]
+        y_true = np.eye(num_classes)[self.y_true]
 
         # Compute the losses for every sample
-        losses = np.mean(-y_pred, axis=-1, keepdims=True)
+        losses = -np.sum(y_pred * y_true, axis=-1, keepdims=True)
 
         return reduction_wrapper[reduction](losses)
 
@@ -298,10 +306,11 @@ class CEWithLogits(Loss):
         if self.y_pred is None or self.y_true is None:
             raise ValueError("You need to call forward() first before to compute the gradients!")
 
-        # Apply a log-softmax on y_pred (from logits to probabilities)
-        gradients = LogSoftmax()(self.y_pred, axis=-1)
+        # Apply a softmax on y_pred (from logits to probabilities)
+        y_pred = Softmax()(self.y_pred, axis=-1)
 
-        # Get the corresponding probabilities for each true class
-        rows = np.arange(len(self.y_pred))
-        gradients[rows, self.y_true] -= 1
-        return gradients
+        # Create a one-hot encoded matrix for y_true
+        num_classes = self.y_pred.shape[-1]
+        y_true = np.eye(num_classes)[self.y_true]
+
+        return y_pred - y_true
