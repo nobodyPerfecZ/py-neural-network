@@ -103,6 +103,6 @@ The following list defines features, that are currently on work:
 
 * [X] Implement Adam optimizer
 * [X] Make backward propagation faster
-* [ ] Fix Errors in BCE/CE Loss 
-* [ ] Fix Errors in Softmax/LogSoftmax
+* [X] Fix Errors in BCE/CE Loss 
+* [X] Fix Errors in Softmax/LogSoftmax
 * [ ] Add more model types to PyNeuralNet

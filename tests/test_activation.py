@@ -272,6 +272,11 @@ class TestSoftmax(unittest.TestCase):
             [3, 4, 5],
             [6, 7, 8],
         ])
+        self.dL_dZ = np.array([
+            [1, 1, 1],
+            [1, 1, 1],
+            [1, 1, 1],
+        ])
         self.act_fn = Softmax()
 
     def test_call(self):
@@ -334,17 +339,13 @@ class TestSoftmax(unittest.TestCase):
         """
         Tests the method backward().
         """
-        # TODO: Implement here
-        """
-        dZ_dX = self.act_fn.gradients(self.X)
-        print(dZ_dX.shape)
+        self.act_fn.forward(self.X, axis=1)
+        dZ_dX = self.act_fn.backward(self.dL_dZ, axis=1)
         np.testing.assert_almost_equal(np.array([
-            [-9.45855173, -7.45855173, -6.45855173],
-            [-5.45855173, -5.45855173, -3.45855173],
-            [-2.45855173, -1.45855173, -1.45855173],
+            [0.08192507, 0.18483645, 0.22269543],
+            [0.08192507, 0.18483645, 0.22269543],
+            [0.08192507, 0.18483645, 0.22269543],
         ]), dZ_dX)
-        """
-        pass
 
     def test_parameters(self):
         """
@@ -369,6 +370,11 @@ class TestLogSoftmax(unittest.TestCase):
             [0, 1, 2],
             [3, 4, 5],
             [6, 7, 8],
+        ])
+        self.dL_dZ = np.array([
+            [1, 1, 1],
+            [1, 1, 1],
+            [1, 1, 1],
         ])
         self.act_fn = LogSoftmax()
 
@@ -426,16 +432,13 @@ class TestLogSoftmax(unittest.TestCase):
         """
         Tests the method backward().
         """
-        # TODO: Implement here
-        """
-        dZ_dX = self.act_fn.backward(self.X)
+        self.act_fn.forward(self.X, axis=1)
+        dL_dX = self.act_fn.backward(self.dL_dZ)
         np.testing.assert_almost_equal(np.array([
-            [-9.45855173, -7.45855173, -6.45855173],
-            [-5.45855173, -5.45855173, -3.45855173],
-            [-2.45855173, -1.45855173, -1.45855173],
-        ]), dZ_dX)
-        """
-        pass
+            [-0.90996943, -0.75527153, -0.33475904],
+            [-0.90996943, -0.75527153, -0.33475904],
+            [-0.90996943, -0.75527153, -0.33475904],
+        ]), dL_dX)
 
     def test_parameters(self):
         """
