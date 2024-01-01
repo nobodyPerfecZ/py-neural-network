@@ -217,8 +217,8 @@ class BCEWithLogits(Loss):
             reduction: Optional[str] = "mean",
             **kwargs
     ) -> Union[np.ndarray, float]:
-        # Change the shape (N,) to (N, 1)
-        y_true = np.expand_dims(y_true, axis=-1)
+        if y_true.ndim == 1:
+            y_true = np.expand_dims(y_true, axis=-1)
 
         if y_pred.shape != y_true.shape:
             raise ValueError(
